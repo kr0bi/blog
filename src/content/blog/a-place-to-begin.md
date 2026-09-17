@@ -24,5 +24,5 @@ photos:
     location: 'Asakusa, Tokyo'
 ---
 
-L'anno scorso il 15 Novembre 2025 mi trovavo a Ueno a Tokyo.
-Questa era la vista serale dal mio albergo APA Hotel Ueno Ekiminami.
+L'anno scorso il 15 Novembre 2025 mi trovavo a Ueno a Tokyo. Dopo essere arrivati in hotel alle 15, siamo andati a mangiare qualcosa per poi crollare nel letto per 3 ore. Alle 18 siamo usciti e la vista fuori dall'hotel era spettacolare... Successivamente ci siamo avventurati per Ueno. 
+Il giorno dopo la sera siamo andati per Asakusa a vedere il famoso tempio buddista il Senso-ji.
