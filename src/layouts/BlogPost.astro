@@ -13,7 +13,7 @@ const galleryPhotos = heroImage && !photos.some((photo) => photo.src.src === her
   : photos;
 ---
 <SiteLayout title={title} description={description} image={heroImage}>
-  <article>
+  <article class="blog-article">
     <header class="article-header">
       <a class="back-link" href={withBase('blog/')}>← Torna indietro</a>
       <p class="eyebrow accent">{CATEGORY_LABELS[category]}{location && ` / ${location}`}</p>

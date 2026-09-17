@@ -11,11 +11,11 @@ const items = await Promise.all(photos.map(async (photo) => ({
   full: await getImage({ src: photo.src, width: Math.min(photo.src.width, 2400), format: 'webp' }),
 })));
 ---
-<photo-carousel class="photo-carousel" role="region" aria-label="Galleria fotografica" aria-roledescription="carosello">
+<photo-carousel class="photo-carousel" style={`--last-photo-ratio: ${items.at(-1) ? items.at(-1)!.src.width / items.at(-1)!.src.height : 1}`} role="region" aria-label="Galleria fotografica" aria-roledescription="carosello">
   <div class="carousel-track" tabindex="0" role="group" aria-label="Fotografie: scorri orizzontalmente o usa le frecce della tastiera">
-    {items.map((photo, index) => <figure class="carousel-slide" role="group" aria-roledescription="diapositiva" aria-label={`${index + 1} di ${photos.length}`}>
+    {items.map((photo, index) => <figure class="carousel-slide" style={`--photo-ratio: ${photo.src.width / photo.src.height}`} role="group" aria-roledescription="diapositiva" aria-label={`${index + 1} di ${photos.length}`}>
       <a class="photo-link" href={photo.full.src} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
-        <Image src={photo.src} alt={photo.alt} width={1000} layout="constrained" loading={priority && index === 0 ? 'eager' : 'lazy'} fetchpriority={priority && index === 0 ? 'high' : undefined} />
+        <Image src={photo.src} alt={photo.alt} width={photo.src.width} height={photo.src.height} widths={[480, 800, 1200, 1600, photo.src.width].filter((width, index, widths) => width <= photo.src.width && widths.indexOf(width) === index)} sizes="(max-width: 600px) calc(100vw - 52px), (max-width: 850px) 70vw, 960px" layout="none" loading={priority && index < 2 ? 'eager' : 'lazy'} fetchpriority={priority && index === 0 ? 'high' : undefined} />
       </a>
       <figcaption>
         {photo.location && <span class="eyebrow">{photo.location}</span>}
@@ -48,10 +48,21 @@ const items = await Promise.all(photos.map(async (photo) => ({
       let interacting = false;
       let current = 0;
       let timer: ReturnType<typeof setTimeout> | undefined;
+      let navigation = 0;
+
+      const prepare = async (index: number) => {
+        const image = slides[(index + slides.length) % slides.length].querySelector('img')!;
+        image.loading = 'eager';
+        try { await image.decode(); } catch { /* Keep navigation available if an image fails. */ }
+      };
 
       const offset = (slide: HTMLElement) => slide.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
-      const goTo = (index: number) => {
+      const goTo = async (index: number) => {
+        const request = ++navigation;
         const target = (index + slides.length) % slides.length;
+        await prepare(target);
+        if (request !== navigation || !this.isConnected) return;
+        void prepare(target + 1);
         track.scrollTo({ left: offset(slides[target]), behavior: motion.matches ? 'instant' : 'smooth' });
       };
       const schedule = () => {
@@ -66,6 +77,7 @@ const items = await Promise.all(photos.map(async (photo) => ({
         if (next !== current) {
           current = next;
           count.textContent = `${current + 1} / ${slides.length}`;
+          void prepare(current + 1);
         }
         schedule();
       };
@@ -80,7 +92,7 @@ const items = await Promise.all(photos.map(async (photo) => ({
       }, options);
       track.addEventListener('focusin', schedule, options);
       track.addEventListener('focusout', () => queueMicrotask(schedule), options);
-      track.addEventListener('pointerdown', () => { interacting = true; schedule(); }, options);
+      track.addEventListener('pointerdown', () => { navigation++; interacting = true; schedule(); }, options);
       const endInteraction = () => { interacting = false; schedule(); };
       window.addEventListener('pointerup', endInteraction, options);
       window.addEventListener('pointercancel', endInteraction, options);
@@ -96,11 +108,12 @@ const items = await Promise.all(photos.map(async (photo) => ({
       motion.addEventListener('change', schedule, options);
       const observer = new IntersectionObserver(([entry]) => {
         visible = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+        if (visible) { void prepare(current); void prepare(current + 1); }
         schedule();
       }, { threshold: 0.2 });
       observer.observe(this);
       schedule();
-      this.cleanup = () => { clearTimeout(timer); events.abort(); observer.disconnect(); };
+      this.cleanup = () => { navigation++; clearTimeout(timer); events.abort(); observer.disconnect(); };
     }
 
     disconnectedCallback() { this.cleanup?.(); }
