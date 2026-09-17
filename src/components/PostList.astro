@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import { postUrl } from '../lib/paths';
+interface Props { posts: CollectionEntry<'blog'>[]; }
+const { posts } = Astro.props;
+---
+<ul class="post-list">
+  {posts.map((post) => <li>
+    <a class="post-row" href={postUrl(post.id)}>
+      <div class="post-date"><FormattedDate date={post.data.pubDate} /><span class="eyebrow">{post.data.category}</span></div>
+      <div class="post-summary"><h3>{post.data.title}</h3><p>{post.data.description}</p>{post.data.location && <span class="location">{post.data.location}</span>}</div>
+      {post.data.heroImage ? <Image class="post-thumbnail" src={post.data.heroImage} alt={post.data.heroAlt!} width={240} height={180} fit="cover" loading="lazy" /> : <span class="post-arrow" aria-hidden="true">↗</span>}
+    </a>
+  </li>)}
+</ul>

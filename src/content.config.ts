@@ -3,18 +3,27 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const blog = defineCollection({
-	// Load Markdown and MDX files in the `src/content/blog/` directory.
-	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-	// Type-check frontmatter using a schema
-	schema: ({ image }) =>
-		z.object({
-			title: z.string(),
-			description: z.string(),
-			// Transform string to Date object
-			pubDate: z.coerce.date(),
-			updatedDate: z.coerce.date().optional(),
-			heroImage: z.optional(image()),
-		}),
+  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+    category: z.enum(['Journey', 'Ideas', 'Photography']).default('Journey'),
+    location: z.string().optional(),
+    heroImage: image().optional(),
+    heroAlt: z.string().optional(),
+    photos: z.array(z.object({
+      src: image(),
+      alt: z.string().trim().min(1),
+      caption: z.string().optional(),
+      location: z.string().optional(),
+    })).default([]),
+  }).refine((data) => !data.heroImage || Boolean(data.heroAlt?.trim()), {
+    message: 'Add descriptive heroAlt text when using a heroImage.',
+    path: ['heroAlt'],
+  }),
 });
 
 export const collections = { blog };

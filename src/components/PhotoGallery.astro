@@ -1,0 +1,22 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+interface Props { photos: (CollectionEntry<'blog'>['data']['photos'][number] & { postLink?: string; postTitle?: string })[]; }
+const { photos } = Astro.props;
+const items = await Promise.all(photos.map(async (photo) => ({
+  ...photo,
+  full: await getImage({ src: photo.src, width: Math.min(photo.src.width, 2400), format: 'webp' }),
+})));
+---
+<div class="photo-grid">
+  {items.map((photo) => <figure>
+    <a class="photo-link" href={photo.full.src} aria-label={`View larger photo: ${photo.alt}`}>
+      <Image src={photo.src} alt={photo.alt} width={1000} layout="constrained" loading="lazy" />
+    </a>
+    <figcaption>
+      {photo.location && <span class="eyebrow">{photo.location}</span>}
+      {photo.caption && <p>{photo.caption}</p>}
+      {photo.postLink && <a href={photo.postLink}>{photo.postTitle} <span aria-hidden="true">↗</span></a>}
+    </figcaption>
+  </figure>)}
+</div>

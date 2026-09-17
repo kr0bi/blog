@@ -1,0 +1,18 @@
+---
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+interface Props { title?: string; description?: string; image?: ImageMetadata; noindex?: boolean; }
+const { title, description = SITE_DESCRIPTION, image, noindex } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head><BaseHead title={title ? `${title} · ${SITE_TITLE}` : SITE_TITLE} description={description} image={image} noindex={noindex} /></head>
+  <body>
+    <Header />
+    <main id="main" class="wrap" tabindex="-1"><slot /></main>
+    <Footer />
+  </body>
+</html>
