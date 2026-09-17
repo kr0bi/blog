@@ -14,16 +14,15 @@ const photos = allPhotos.slice(0, 10);
     <div>
       <h1>Viaggio in Giappone 2026<br /></h1>
       <p class="intro-copy">Diario di viaggio.</p>
-      <a class="text-link" href={withBase('blog/')}>Esplora le note <span aria-hidden="true">↗</span></a>
     </div>
     <div class="travel-mark" aria-hidden="true"><span class="large-sun"></span><span class="mark-label">GIAPPONE<br />日本</span></div>
   </section>
   <section class="journal-section" aria-labelledby="latest-heading">
-    <div class="section-heading"><h2 id="latest-heading">Dal diario</h2><a href={withBase('blog/')}>Tutte le note <span aria-hidden="true">↗</span></a></div>
+    <div class="section-heading"><h2 id="latest-heading">Ultime note:</h2><a href={withBase('blog/')}>Tutte le note <span aria-hidden="true">↗</span></a></div>
     {posts.length ? <PostList posts={posts.slice(0, 4)} /> : <p class="empty-copy">Non sono ancora state pubblicate. Torna presto.</p>}
   </section>
   <section class="home-photos" aria-labelledby="photos-heading">
-    <div class="section-heading"><h2 id="photos-heading">Raccolta fotografica</h2><a href={withBase('photos/')}>Tutte le fotografie <span aria-hidden="true">↗</span></a></div>
+    <div class="section-heading"><h2 id="photos-heading">Ultime foto:</h2><a href={withBase('photos/')}>Tutte le fotografie <span aria-hidden="true">↗</span></a></div>
     {photos.length ? <PhotoGallery photos={photos} /> : <div class="photo-empty"><span class="frame-mark" aria-hidden="true">＋</span><div><h3>Una collezione in costruzione.</h3><p>Le fotografie del viaggio si troveranno qui.</p></div></div>}
     {allPhotos.length > 10 && <div class="gallery-more"><a href={withBase('photos/')}>Mostra tutte le {allPhotos.length} fotografie <span aria-hidden="true">↗</span></a></div>}
   </section>

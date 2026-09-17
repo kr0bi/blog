@@ -5,7 +5,7 @@ import { getPublishedPosts } from '../../lib/posts';
 const posts = await getPublishedPosts();
 ---
 <SiteLayout title="Diario" description="Idee e osservazioni da un viaggio in Giappone.">
-  <header class="page-intro"><p class="eyebrow accent">Il viaggio in parole</p><h1>Il diario.</h1><p>Spazio per un pensiero di passaggio, un lungo racconto e tutto ciò che sta nel mezzo.</p></header>
+  <header class="page-intro"></header>
   <section aria-label="Note del diario">
     <div class="section-heading"><h2>Tutte le note</h2><span class="muted">{posts.length} {posts.length === 1 ? 'nota' : 'note'}</span></div>
     {posts.length ? <PostList posts={posts} /> : <p class="empty-copy">La prima pagina è ancora da scrivere. Torna presto.</p>}

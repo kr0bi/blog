@@ -7,6 +7,6 @@ const posts = await getPublishedPosts();
 const photos = getPhotosNewestFirst(posts);
 ---
 <SiteLayout title="Foto" description="Una raccolta di fotografie dal Giappone.">
-  <header class="page-intro"><h1>Raccolta fotografica</h1><p>Luoghi, dettagli e momenti quotidiani.</p></header>
+  <header class="page-intro"><h1>Raccolta fotografica</h1></header>
   {photos.length ? <PhotoGallery photos={photos} /> : <div class="photo-empty roomy"><span class="frame-mark" aria-hidden="true">＋</span><div><h2>Una collezione in costruzione.</h2><p>Le prime fotografie appariranno qui, man mano che il viaggio prosegue.</p></div></div>}
 </SiteLayout>
