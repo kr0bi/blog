@@ -1,0 +1,109 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  photos: (CollectionEntry<'blog'>['data']['photos'][number] & { postLink?: string; postTitle?: string })[];
+  priority?: boolean;
+}
+const { photos, priority = false } = Astro.props;
+const items = await Promise.all(photos.map(async (photo) => ({
+  ...photo,
+  full: await getImage({ src: photo.src, width: Math.min(photo.src.width, 2400), format: 'webp' }),
+})));
+---
+<photo-carousel class="photo-carousel" role="region" aria-label="Galleria fotografica" aria-roledescription="carosello">
+  <div class="carousel-track" tabindex="0" role="group" aria-label="Fotografie: scorri orizzontalmente o usa le frecce della tastiera">
+    {items.map((photo, index) => <figure class="carousel-slide" role="group" aria-roledescription="diapositiva" aria-label={`${index + 1} di ${photos.length}`}>
+      <a class="photo-link" href={photo.full.src} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
+        <Image src={photo.src} alt={photo.alt} width={1000} layout="constrained" loading={priority && index === 0 ? 'eager' : 'lazy'} fetchpriority={priority && index === 0 ? 'high' : undefined} />
+      </a>
+      <figcaption>
+        {photo.location && <span class="eyebrow">{photo.location}</span>}
+        {photo.caption && <p>{photo.caption}</p>}
+      </figcaption>
+    </figure>)}
+  </div>
+  <div class="carousel-controls" hidden>
+    <button type="button" data-action="previous" aria-label="Foto precedente">←</button>
+    <span class="carousel-count" aria-live="off">1 / {photos.length}</span>
+    <button type="button" data-action="next" aria-label="Foto successiva">→</button>
+  </div>
+</photo-carousel>
+
+<script>
+  class PhotoCarousel extends HTMLElement {
+    private cleanup?: () => void;
+
+    connectedCallback() {
+      const track = this.querySelector<HTMLElement>('.carousel-track')!;
+      const slides = Array.from(this.querySelectorAll<HTMLElement>('.carousel-slide'));
+      if (slides.length < 2) return;
+
+      const controls = this.querySelector<HTMLElement>('.carousel-controls')!;
+      const count = this.querySelector<HTMLElement>('.carousel-count')!;
+      const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const events = new AbortController();
+      const options = { signal: events.signal };
+      let visible = false;
+      let interacting = false;
+      let current = 0;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+
+      const offset = (slide: HTMLElement) => slide.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+      const goTo = (index: number) => {
+        const target = (index + slides.length) % slides.length;
+        track.scrollTo({ left: offset(slides[target]), behavior: motion.matches ? 'instant' : 'smooth' });
+      };
+      const schedule = () => {
+        clearTimeout(timer);
+        if (visible && !interacting && !document.hidden && !motion.matches && !track.contains(document.activeElement)) {
+          timer = setTimeout(() => { goTo(current + 1); schedule(); }, 5000);
+        }
+      };
+      const updateCurrent = () => {
+        const next = slides.reduce((best, slide, index) =>
+          Math.abs(offset(slide) - track.scrollLeft) < Math.abs(offset(slides[best]) - track.scrollLeft) ? index : best, 0);
+        if (next !== current) {
+          current = next;
+          count.textContent = `${current + 1} / ${slides.length}`;
+        }
+        schedule();
+      };
+
+      controls.hidden = false;
+      controls.addEventListener('click', (event) => {
+        const action = (event.target as Element).closest<HTMLButtonElement>('button')?.dataset.action;
+        if (action === 'previous' || action === 'next') {
+          goTo(current + (action === 'next' ? 1 : -1));
+          schedule();
+        }
+      }, options);
+      track.addEventListener('focusin', schedule, options);
+      track.addEventListener('focusout', () => queueMicrotask(schedule), options);
+      track.addEventListener('pointerdown', () => { interacting = true; schedule(); }, options);
+      const endInteraction = () => { interacting = false; schedule(); };
+      window.addEventListener('pointerup', endInteraction, options);
+      window.addEventListener('pointercancel', endInteraction, options);
+      track.addEventListener('wheel', schedule, { ...options, passive: true });
+      track.addEventListener('scroll', updateCurrent, { ...options, passive: true });
+      track.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        goTo(event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : current + (event.key === 'ArrowRight' ? 1 : -1));
+        schedule();
+      }, options);
+      document.addEventListener('visibilitychange', schedule, options);
+      motion.addEventListener('change', schedule, options);
+      const observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+        schedule();
+      }, { threshold: 0.2 });
+      observer.observe(this);
+      schedule();
+      this.cleanup = () => { clearTimeout(timer); events.abort(); observer.disconnect(); };
+    }
+
+    disconnectedCallback() { this.cleanup?.(); }
+  }
+  if (!customElements.get('photo-carousel')) customElements.define('photo-carousel', PhotoCarousel);
+</script>

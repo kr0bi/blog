@@ -1,7 +1,7 @@
 # Notes from Japan
 
 A minimalist personal journal. 
-Built with Astro, Markdown/MDX, local fonts, and plain CSS. The output is a static website with no client JavaScript, accounts, comments, social widgets, or analytics.
+Built with Astro, Markdown/MDX, local fonts, and plain CSS. The output is a static website with a small JavaScript photo carousel and no accounts, comments, social widgets, or analytics.
 
 ## Development
 
@@ -57,15 +57,19 @@ heroImage: '../../assets/photos/kyoto-morning.jpg'
 heroAlt: 'Morning light falling across a narrow street in Kyoto'
 photos:
   - src: '../../assets/photos/kyoto-morning.jpg'
+    date: 2026-09-18
     alt: 'Morning light falling across a narrow street in Kyoto'
     caption: 'Before the city wakes up.'
     location: Kyoto
   - src: '../../assets/photos/train-window.jpg'
+    date: 2026-09-17
     alt: 'Fields seen through the window of a train'
     caption: 'Somewhere along the way.'
 ```
 
-Photos appear below the entry, in the photo archive, and in the homepage’s latest four photographs. Cover images appear in the journal list and entry header; add them to `photos` too if you want them in the archive. Images get responsive sizes, lazy loading (except the entry cover), and build-time optimization. Select a gallery image to open a larger optimized version using the browser’s native image viewer; use Back to return. Gallery images require alt text, and covers require `heroAlt`.
+La homepage mostra una griglia delle 10 fotografie più recenti. Se ce ne sono più di 10, il pulsante “Mostra tutte le fotografie” apre la pagina Foto con la raccolta completa. Entrambe le raccolte sono ordinate dalla foto più recente alla più vecchia: aggiungi `date: 2026-09-18` a ogni elemento di `photos` per indicarne la data. Se `date` manca, viene usata la data `pubDate` della nota. A parità di data viene mantenuto l’ordine originale; puoi includere anche l’ora, per esempio `date: '2026-09-18T19:30:00+09:00'`.
+
+Solo nei post con più foto viene mostrato il carosello, prima del testo e nell’ordine indicato in `photos`. Avanza ogni 5 secondi e ricomincia dalla prima foto quando arriva alla fine. Frecce e contatore sono centrati sotto le immagini; non ci sono pulsanti Pausa/Riprendi. Puoi anche scorrere con il dito o con la tastiera. L’avanzamento automatico rispetta la preferenza del dispositivo per i movimenti ridotti. Una sola foto viene mostrata centrata, senza carosello. Senza JavaScript è disponibile lo scorrimento orizzontale manuale. Cover images appear in the journal list and join the entry carousel without duplicates; add them to `photos` too if you want them in the archive. Images get responsive sizes, lazy loading (except the entry cover), and build-time optimization. Select a gallery image to open a larger optimized version using the browser’s native image viewer; use Back to return. Gallery images require alt text, and covers require `heroAlt`.
 
 For an image within the writing, ordinary Markdown also works:
 
@@ -81,23 +85,3 @@ The initial photo archive is empty because no personal photographs have been sup
 - Introduction and biography: `src/pages/index.astro`.
 - Colors, typography, and layout: `src/styles/global.css`.
 - Content validation: `src/content.config.ts`.
-
-## Repository and publishing
-
-The local repository is connected to `https://github.com/kr0bi/blog.git` as `origin`. That remote was empty when inspected, so there was no remote history or content to merge. The existing local Git history is preserved. Changes have not been pushed or deployed.
-
-The default configuration targets `https://kr0bi.github.io/blog/`. The workflow in `.github/workflows/deploy.yml` checks, builds, and deploys on pushes to `main` or `master`, and supports manual runs. When ready to publish:
-
-1. In GitHub repository **Settings → Pages**, choose **GitHub Actions** as the source.
-2. Commit the local changes and push your branch to `origin`.
-3. The deployment workflow publishes the contents of `dist/`.
-
-See the [Astro GitHub Pages guide](https://docs.astro.build/en/guides/deploy/github/) for hosting setup.
-
-For a custom domain or another static host, configure `site` and `base` in `astro.config.mjs`, or supply environment variables at build time:
-
-```sh
-SITE_URL=https://your-domain.example BASE_PATH=/ npm run build
-```
-
-`SITE_URL` is the origin; `BASE_PATH` is the path at which the site is mounted. Navigation, RSS, canonical URLs, and the sitemap use this configuration. Upload `dist/` to the configured location.

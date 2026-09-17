@@ -18,6 +18,7 @@ const blog = defineCollection({
       src: image(),
       alt: z.string().trim().min(1),
       caption: z.string().optional(),
+      date: z.coerce.date().optional(),
       location: z.string().optional(),
     })).default([]),
   }).refine((data) => !data.heroImage || Boolean(data.heroAlt?.trim()), {
