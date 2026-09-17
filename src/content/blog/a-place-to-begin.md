@@ -24,5 +24,8 @@ photos:
     location: 'Asakusa, Tokyo'
 ---
 
-L'anno scorso il 15 Novembre 2025 mi trovavo a Ueno a Tokyo. Dopo essere arrivati in hotel alle 15, siamo andati a mangiare qualcosa per poi crollare nel letto per 3 ore. Alle 18 siamo usciti e la vista fuori dall'hotel era spettacolare... Successivamente ci siamo avventurati per Ueno. 
-Il giorno dopo la sera siamo andati per Asakusa a vedere il famoso tempio buddista il Senso-ji.
+L'anno scorso il 15 Novembre 2025 mi trovavo a Ueno a Tokyo. Dopo essere arrivati in hotel alle 15, siamo andati a mangiare qualcosa per poi crollare nel letto per alcune ore. 
+
+Alle 18 siamo usciti e la vista fuori dall'hotel era spettacolare... Successivamente ci siamo avventurati per Ueno. 
+
+La sera del giorno successivo siamo andati per Asakusa a vedere il famoso tempio buddista il Senso-ji.
