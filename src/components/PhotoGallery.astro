@@ -11,9 +11,9 @@ const items = await Promise.all(photos.map(async (photo) => ({
   full: await getImage({ src: photo.src, width: Math.min(photo.src.width, 2400), format: 'webp' }),
 })));
 ---
-<div class:list={['photo-grid', { 'photo-grid--single': photos.length === 1 }]}>
+<div data-photo-gallery class:list={['photo-grid', { 'photo-grid--single': photos.length === 1 }]}>
   {items.map((photo, index) => <figure>
-    <a class="photo-link" href={photo.full.src} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
+    <a class="photo-link" href={photo.full.src} data-pswp-width={photo.full.attributes.width} data-pswp-height={photo.full.attributes.height} data-photo-caption={photo.caption || photo.alt} data-photo-location={photo.location} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
       <Image src={photo.src} alt={photo.alt} width={1000} layout="constrained" loading={priority && index === 0 ? 'eager' : 'lazy'} fetchpriority={priority && index === 0 ? 'high' : undefined} />
     </a>
     <figcaption>
@@ -23,3 +23,7 @@ const items = await Promise.all(photos.map(async (photo) => ({
     </figcaption>
   </figure>)}
 </div>
+
+<script>
+  import '../scripts/photo-lightbox';
+</script>

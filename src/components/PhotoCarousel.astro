@@ -12,9 +12,9 @@ const items = await Promise.all(photos.map(async (photo) => ({
 })));
 ---
 <photo-carousel class="photo-carousel" style={`--last-photo-ratio: ${items.at(-1) ? items.at(-1)!.src.width / items.at(-1)!.src.height : 1}`} role="region" aria-label="Galleria fotografica" aria-roledescription="carosello">
-  <div class="carousel-track" tabindex="0" role="group" aria-label="Fotografie: scorri orizzontalmente o usa le frecce della tastiera">
+  <div data-photo-gallery class="carousel-track" tabindex="0" role="group" aria-label="Fotografie: scorri orizzontalmente o usa le frecce della tastiera">
     {items.map((photo, index) => <figure class="carousel-slide" style={`--photo-ratio: ${photo.src.width / photo.src.height}`} role="group" aria-roledescription="diapositiva" aria-label={`${index + 1} di ${photos.length}`}>
-      <a class="photo-link" href={photo.full.src} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
+      <a class="photo-link" href={photo.full.src} data-pswp-width={photo.full.attributes.width} data-pswp-height={photo.full.attributes.height} data-photo-caption={photo.caption || photo.alt} data-photo-location={photo.location} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
         <Image src={photo.src} alt={photo.alt} width={photo.src.width} height={photo.src.height} widths={[480, 800, 1200, 1600, photo.src.width].filter((width, index, widths) => width <= photo.src.width && widths.indexOf(width) === index)} sizes="(max-width: 600px) calc(100vw - 52px), (max-width: 850px) 70vw, 960px" layout="none" loading={priority && index < 2 ? 'eager' : 'lazy'} fetchpriority={priority && index === 0 ? 'high' : undefined} />
       </a>
       <figcaption>
@@ -31,6 +31,8 @@ const items = await Promise.all(photos.map(async (photo) => ({
 </photo-carousel>
 
 <script>
+  import '../scripts/photo-lightbox';
+
   class PhotoCarousel extends HTMLElement {
     private cleanup?: () => void;
 
@@ -46,6 +48,7 @@ const items = await Promise.all(photos.map(async (photo) => ({
       const options = { signal: events.signal };
       let visible = false;
       let interacting = false;
+      let lightboxOpen = false;
       let current = 0;
       let timer: ReturnType<typeof setTimeout> | undefined;
       let navigation = 0;
@@ -61,13 +64,13 @@ const items = await Promise.all(photos.map(async (photo) => ({
         const request = ++navigation;
         const target = (index + slides.length) % slides.length;
         await prepare(target);
-        if (request !== navigation || !this.isConnected) return;
+        if (request !== navigation || !this.isConnected || lightboxOpen) return;
         void prepare(target + 1);
         track.scrollTo({ left: offset(slides[target]), behavior: motion.matches ? 'instant' : 'smooth' });
       };
       const schedule = () => {
         clearTimeout(timer);
-        if (visible && !interacting && !document.hidden && !motion.matches && !track.contains(document.activeElement)) {
+        if (visible && !interacting && !lightboxOpen && !document.hidden && !motion.matches && !track.contains(document.activeElement)) {
           timer = setTimeout(() => { goTo(current + 1); schedule(); }, 5000);
         }
       };
@@ -105,6 +108,16 @@ const items = await Promise.all(photos.map(async (photo) => ({
         schedule();
       }, options);
       document.addEventListener('visibilitychange', schedule, options);
+      document.addEventListener('photo-lightbox:open', () => {
+        lightboxOpen = true;
+        navigation++;
+        track.scrollTo({ left: track.scrollLeft, behavior: 'instant' });
+        schedule();
+      }, options);
+      document.addEventListener('photo-lightbox:close', () => {
+        lightboxOpen = false;
+        schedule();
+      }, options);
       motion.addEventListener('change', schedule, options);
       const observer = new IntersectionObserver(([entry]) => {
         visible = entry.isIntersecting && entry.intersectionRatio >= 0.2;
