@@ -10,7 +10,7 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     draft: z.boolean().default(false),
-    category: z.enum(['Journey', 'Ideas', 'Photography']).default('Journey'),
+    category: z.enum(['Journey', 'Ideas', 'Photography', 'Introduction']).default('Journey'),
     location: z.string().optional(),
     heroImage: image().optional(),
     heroAlt: z.string().optional(),
@@ -21,7 +21,7 @@ const blog = defineCollection({
       location: z.string().optional(),
     })).default([]),
   }).refine((data) => !data.heroImage || Boolean(data.heroAlt?.trim()), {
-    message: 'Add descriptive heroAlt text when using a heroImage.',
+    message: 'Aggiungi un testo descrittivo in heroAlt quando usi heroImage.',
     path: ['heroAlt'],
   }),
 });

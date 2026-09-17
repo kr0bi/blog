@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { CATEGORY_LABELS } from '../consts';
 import type { CollectionEntry } from 'astro:content';
 import SiteLayout from './SiteLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
@@ -12,13 +13,13 @@ const { title, description, pubDate, updatedDate, heroImage, heroAlt, category, 
   <article>
     <header class="article-header">
       <a class="back-link" href={withBase('blog/')}>← Torna indietro</a>
-      <p class="eyebrow accent">{category}{location && ` / ${location}`}</p>
+      <p class="eyebrow accent">{CATEGORY_LABELS[category]}{location && ` / ${location}`}</p>
       <h1>{title}</h1><p class="article-description">{description}</p>
       <div class="article-date"><FormattedDate date={pubDate} />{updatedDate && <span> · Aggiornato il <FormattedDate date={updatedDate} /></span>}</div>
     </header>
     {heroImage && <Image class="article-hero" src={heroImage} alt={heroAlt!} width={1400} layout="constrained" loading="eager" fetchpriority="high" />}
     <div class="prose"><slot /></div>
-    {photos.length > 0 && <section class="article-gallery" aria-label="Photographs from this entry"><PhotoGallery photos={photos} /></section>}
+    {photos.length > 0 && <section class="article-gallery" aria-label="Fotografie di questa nota"><PhotoGallery photos={photos} /></section>}
     <div class="article-end"><span class="sun" aria-hidden="true"></span><a href={withBase('blog/')}>Altre note del diario ↗</a></div>
   </article>
 </SiteLayout>

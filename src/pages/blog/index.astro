@@ -4,10 +4,10 @@ import PostList from '../../components/PostList.astro';
 import { getPublishedPosts } from '../../lib/posts';
 const posts = await getPublishedPosts();
 ---
-<SiteLayout title="Journal" description="Ideas and observations from a journey to Japan.">
-  <header class="page-intro"><p class="eyebrow accent">The written part</p><h1>The journal.</h1><p>Room for a passing thought, a long story, and everything in between.</p></header>
-  <section aria-label="Journal entries">
-    <div class="section-heading"><h2>All entries</h2><span class="muted">{posts.length} {posts.length === 1 ? 'entry' : 'entries'}</span></div>
-    {posts.length ? <PostList posts={posts} /> : <p class="empty-copy">The first page is still waiting to be written. Come back soon.</p>}
+<SiteLayout title="Diario" description="Idee e osservazioni da un viaggio in Giappone.">
+  <header class="page-intro"><p class="eyebrow accent">Il viaggio in parole</p><h1>Il diario.</h1><p>Spazio per un pensiero di passaggio, un lungo racconto e tutto ciò che sta nel mezzo.</p></header>
+  <section aria-label="Note del diario">
+    <div class="section-heading"><h2>Tutte le note</h2><span class="muted">{posts.length} {posts.length === 1 ? 'nota' : 'note'}</span></div>
+    {posts.length ? <PostList posts={posts} /> : <p class="empty-copy">La prima pagina è ancora da scrivere. Torna presto.</p>}
   </section>
 </SiteLayout>

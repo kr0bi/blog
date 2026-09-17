@@ -1,11 +1,11 @@
 ---
-title: 'Your next entry'
-description: 'A short introduction to your story.'
+title: 'La tua prossima nota'
+description: 'Una breve introduzione al tuo racconto.'
 pubDate: 2026-09-17
 category: Journey
 draft: true
 ---
 
-Start writing here. Copy this file with a new name and set your title and date.
+Inizia a scrivere qui. Copia questo file con un nuovo nome e imposta il titolo e la data.
 
-Keep `draft: true` until the entry is ready to publish.
+Mantieni `draft: true` finché la nota non è pronta per essere pubblicata.

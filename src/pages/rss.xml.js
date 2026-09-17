@@ -7,6 +7,7 @@ export async function GET(context) {
   return rss({
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    customData: '<language>it</language>',
     site: new URL(withBase(), context.site),
     items: posts.map((post) => ({
       title: post.data.title,

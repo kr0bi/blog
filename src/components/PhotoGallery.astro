@@ -10,7 +10,7 @@ const items = await Promise.all(photos.map(async (photo) => ({
 ---
 <div class="photo-grid">
   {items.map((photo) => <figure>
-    <a class="photo-link" href={photo.full.src} aria-label={`View larger photo: ${photo.alt}`}>
+    <a class="photo-link" href={photo.full.src} aria-label={`Ingrandisci la fotografia: ${photo.alt}`}>
       <Image src={photo.src} alt={photo.alt} width={1000} layout="constrained" loading="lazy" />
     </a>
     <figcaption>

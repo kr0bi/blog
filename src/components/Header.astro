@@ -1,12 +1,12 @@
 ---
 import { SITE_TITLE } from '../consts';
 import { withBase } from '../lib/paths';
-const navigation = [{ path: 'blog/', label: 'Journal' }, { path: 'photos/', label: 'Photos' }];
+const navigation = [{ path: 'blog/', label: 'Diario' }, { path: 'photos/', label: 'Foto' }];
 ---
 <a class="skip-link" href="#main">Vai al contenuto</a>
 <header class="site-header wrap">
-  <a class="wordmark" href={withBase()} aria-label={`${SITE_TITLE} — home`}><span class="sun" aria-hidden="true"></span>{SITE_TITLE}</a>
-  <nav aria-label="Main navigation">
+  <a class="wordmark" href={withBase()} aria-label={`${SITE_TITLE} — pagina iniziale`}><span class="sun" aria-hidden="true"></span>{SITE_TITLE}</a>
+  <nav aria-label="Navigazione principale">
     {navigation.map(({ path, label }) => <a href={withBase(path)} aria-current={Astro.url.pathname.startsWith(withBase(path).replace(/\/$/, '')) ? 'page' : undefined}>{label}</a>)}
   </nav>
 </header>

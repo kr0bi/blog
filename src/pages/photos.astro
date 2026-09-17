@@ -6,7 +6,7 @@ import { postUrl } from '../lib/paths';
 const posts = await getPublishedPosts();
 const photos = posts.flatMap((post) => post.data.photos.map((photo) => ({ ...photo, postLink: postUrl(post.id), postTitle: post.data.title })));
 ---
-<SiteLayout title="Photos" description="A collection of photographs and small details from Japan.">
-  <header class="page-intro"><p class="eyebrow accent">The moments between words</p><h1>Through the lens.</h1><p>A few things to look back on. Places, details, and ordinary moments.</p></header>
-  {photos.length ? <PhotoGallery photos={photos} /> : <div class="photo-empty roomy"><span class="frame-mark" aria-hidden="true">＋</span><div><h2>A collection in the making.</h2><p>The first photographs will appear here as the journey unfolds.</p></div></div>}
+<SiteLayout title="Foto" description="Una raccolta di fotografie dal Giappone.">
+  <header class="page-intro"><h1>Raccolta fotografica</h1><p>Luoghi, dettagli e momenti quotidiani.</p></header>
+  {photos.length ? <PhotoGallery photos={photos} /> : <div class="photo-empty roomy"><span class="frame-mark" aria-hidden="true">＋</span><div><h2>Una collezione in costruzione.</h2><p>Le prime fotografie appariranno qui, man mano che il viaggio prosegue.</p></div></div>}
 </SiteLayout>
